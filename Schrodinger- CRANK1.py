@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[15]:
+# In[19]:
 
 
 import numpy as np
@@ -11,7 +11,7 @@ import scipy.integrate as si
 import numpy.linalg as npla
 
 
-# In[16]:
+# In[20]:
 
 
 #this is my attempt at crank with the 1D heat equation
@@ -44,7 +44,7 @@ def T(x,t0):
     Ti1=np.exp((-1/2)*(xi1**2)/(sigma)**2)
     return Ti1,xi1
 
-def CrankNicolson(Ti, T_t,tn,xi,dt,dx):#NEED TO FINISH WRITING THIS put in the inverse matrix
+def CrankNicolson(Ti,T_t,tn,xi):#NEED TO FINISH WRITING THIS put in the inverse matrix
     xi1=xi+dx
     tn1=tn+dt
     r=(k*dt)/(2*(dx)**2)
@@ -69,16 +69,18 @@ def CrankNicolson(Ti, T_t,tn,xi,dt,dx):#NEED TO FINISH WRITING THIS put in the i
     return Ti1,T_t, tn1, xi1
 
 for n in range(nsteps):#run crank for all t and plot for each
-    Ti,T_t, tn= CrankNicolson(Ti,T_t,tn,xi,dt,dx)
+    Ti,T_t, tn= CrankNicolson(Ti,T_t,tn,xi)
     t[n+1]=tn 
-    T[i+1]=Ti
-    T_t.append=(T.copy())
+    T[i+1]=Ti#doesnt make sense
+    T[0]=0#boundary conditions?
+    T[L]=0
+    T_t.append(T.copy())
     plt.plot(T,x)
     
 plt.show()
 
 
-# In[17]:
+# In[21]:
 
 
 #this is me figuring out how to make a matrix...
@@ -106,6 +108,71 @@ d = tridiag(A, B, C)
 
 D=npla.inv(d)
 #print(D)
+
+
+# In[31]:
+
+
+#this is my 2nd attempt at crank with the 1D heat equation
+
+#variables
+L=20
+t0=0
+tmax=L
+x0=0
+xmax=L
+isteps=20
+nsteps=20
+dt=tmax/nsteps
+dx=xmax/isteps
+k=L**2/tmax
+r=(k*dt)/(2*(dx)**2)
+sigma=L/4
+x=np.array((x0+i*dx,isteps))
+t=np.zeros(nsteps)
+T=np.zeros(isteps)
+
+print(x)
+#T for t=0
+def T(x):
+    Ti=np.exp((-1/2)*(xi**2)/(sigma)**2)
+    return T
+
+for i in range(isteps):
+        xi=T(xi)
+        x[i+1]=xi
+        T[i+1]=Ti
+print(Ti)
+
+def CrankNicolson(Ti):#NEED TO FINISH WRITING THIS put in the inverse matrix
+    a=-r
+    b=(1+2*r)
+    c=-r
+    for i in range(isteps):
+        t0=t0
+        xi=T(xi)
+        x[i+1]=xi
+        T[i+1]=Ti
+    Ti=r*T[i+1]+(1-2*r)*T[i]+r*T[i-1]    
+    D=np.matrix[Ti]
+    def tridiag(A, B, C, k1=-1, k2=0, k3=1):#tridiagonal matrix
+        return np.diag(A, k1) + np.diag(B, k2) + np.diag(C, k3)
+    A =[a]*(isteps-1); B = [b]*(isteps); C = [c]*(isteps-1)
+    d = tridiag(A, B, C)
+    I=npla.inv(d)#inverse matrix
+    Ti1=I*D
+    return Ti1
+print(Ti1)
+#for n in range(nsteps):#run crank for all t and plot for each
+ #   Ti,T_t, tn= CrankNicolson(Ti,T_t,tn,xi)
+ #   t[n+1]=tn 
+  #  T[i+1]=Ti#doesnt make sense
+   # T[0]=0#boundary conditions?
+    #T[L]=0
+   # T_t.append(T.copy())
+    #plt.plot(T,x)
+    
+#plt.show()
 
 
 # In[ ]:
