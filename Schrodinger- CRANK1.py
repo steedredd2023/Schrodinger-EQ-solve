@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[19]:
+# In[2]:
 
 
 import numpy as np
@@ -11,7 +11,7 @@ import scipy.integrate as si
 import numpy.linalg as npla
 
 
-# In[20]:
+# In[3]:
 
 
 #this is my attempt at crank with the 1D heat equation
@@ -80,7 +80,7 @@ for n in range(nsteps):#run crank for all t and plot for each
 plt.show()
 
 
-# In[21]:
+# In[29]:
 
 
 #this is me figuring out how to make a matrix...
@@ -88,7 +88,7 @@ nsteps=3
 A=np.zeros((nsteps,1))
 A[0:3]=[2]*1
 
-print(A)
+#print(A)
 
 a=np.array([1,2,3,4])
 b=np.diag(a)
@@ -108,9 +108,17 @@ d = tridiag(A, B, C)
 
 D=npla.inv(d)
 #print(D)
+x0=0
+dx=1
+x=np.zeros(nsteps+1)
+for n in range(nsteps):
+    xn=x0+(n+1)*dx
+    x[n+1]=xn
+
+print(x)
 
 
-# In[31]:
+# In[36]:
 
 
 #this is my 2nd attempt at crank with the 1D heat equation
@@ -128,23 +136,29 @@ dx=xmax/isteps
 k=L**2/tmax
 r=(k*dt)/(2*(dx)**2)
 sigma=L/4
-x=np.array((x0+i*dx,isteps))
-t=np.zeros(nsteps)
-T=np.zeros(isteps)
-
-print(x)
-#T for t=0
-def T(x):
-    Ti=np.exp((-1/2)*(xi**2)/(sigma)**2)
-    return T
+x=np.zeros(isteps+1)
 
 for i in range(isteps):
-        xi=T(xi)
-        x[i+1]=xi
-        T[i+1]=Ti
-print(Ti)
+    xi=x0+(i+1)*dx
+    x[i+1]=xi
+    
+#t=np.zeros(nsteps)
+T=np.zeros(isteps+1)
 
-def CrankNicolson(Ti):#NEED TO FINISH WRITING THIS put in the inverse matrix
+#T for t=0
+
+    #T=np.exp((-1/2)*(xi**2)/(sigma)**2)
+
+
+for i in range(isteps):#gives first array of T vs x
+    xi=x0+(i+1)*dx
+    Ti=np.exp((-1/2)*(xi**2)/(sigma)**2)
+    T[i+1]=Ti
+print(T)
+
+#make array of T
+
+def CrankNicolson(T):#NEED TO FINISH WRITING THIS put in the inverse matrix
     a=-r
     b=(1+2*r)
     c=-r
@@ -162,7 +176,8 @@ def CrankNicolson(Ti):#NEED TO FINISH WRITING THIS put in the inverse matrix
     I=npla.inv(d)#inverse matrix
     Ti1=I*D
     return Ti1
-print(Ti1)
+
+#print(Ti1)
 #for n in range(nsteps):#run crank for all t and plot for each
  #   Ti,T_t, tn= CrankNicolson(Ti,T_t,tn,xi)
  #   t[n+1]=tn 
