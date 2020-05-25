@@ -118,7 +118,7 @@ for n in range(nsteps):
 print(x)
 
 
-# In[36]:
+# In[42]:
 
 
 #this is my 2nd attempt at crank with the 1D heat equation
@@ -156,28 +156,27 @@ for i in range(isteps):#gives first array of T vs x
     T[i+1]=Ti
 print(T)
 
-#make array of T
+#make array of arrays of T
+Tn=[]
+Tn.append(T)
+print(Tn)
 
-def CrankNicolson(T):#NEED TO FINISH WRITING THIS put in the inverse matrix
+def CrankNicolson(Tn):#NEED TO FINISH WRITING THIS put in the inverse matrix
     a=-r
     b=(1+2*r)
     c=-r
-    for i in range(isteps):
-        t0=t0
-        xi=T(xi)
-        x[i+1]=xi
-        T[i+1]=Ti
-    Ti=r*T[i+1]+(1-2*r)*T[i]+r*T[i-1]    
-    D=np.matrix[Ti]
+    RHS=r*T[i+1]+(1-2*r)*T[i]+r*T[i-1]
+    D=np.matrix[RHS]
     def tridiag(A, B, C, k1=-1, k2=0, k3=1):#tridiagonal matrix
         return np.diag(A, k1) + np.diag(B, k2) + np.diag(C, k3)
     A =[a]*(isteps-1); B = [b]*(isteps); C = [c]*(isteps-1)
     d = tridiag(A, B, C)
     I=npla.inv(d)#inverse matrix
-    Ti1=I*D
-    return Ti1
+    T1=I*D
+    Tn.append(T1)
+    return Tn
 
-#print(Ti1)
+print(Tn)
 #for n in range(nsteps):#run crank for all t and plot for each
  #   Ti,T_t, tn= CrankNicolson(Ti,T_t,tn,xi)
  #   t[n+1]=tn 
@@ -188,6 +187,12 @@ def CrankNicolson(T):#NEED TO FINISH WRITING THIS put in the inverse matrix
     #plt.plot(T,x)
     
 #plt.show()
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
