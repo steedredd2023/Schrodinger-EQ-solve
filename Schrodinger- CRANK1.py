@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 import numpy as np
@@ -11,7 +11,7 @@ import scipy.integrate as si
 import numpy.linalg as npla
 
 
-# In[3]:
+# In[2]:
 
 
 #this is my attempt at crank with the 1D heat equation
@@ -80,7 +80,7 @@ for n in range(nsteps):#run crank for all t and plot for each
 plt.show()
 
 
-# In[29]:
+# In[3]:
 
 
 #this is me figuring out how to make a matrix...
@@ -118,7 +118,7 @@ for n in range(nsteps):
 print(x)
 
 
-# In[42]:
+# In[11]:
 
 
 #this is my 2nd attempt at crank with the 1D heat equation
@@ -161,7 +161,7 @@ Tn=[]
 Tn.append(T)
 print(Tn)
 
-def CrankNicolson(Tn):#NEED TO FINISH WRITING THIS put in the inverse matrix
+def CrankNicolson(T):#NEED TO FINISH WRITING THIS put in the inverse matrix
     a=-r
     b=(1+2*r)
     c=-r
@@ -173,20 +173,15 @@ def CrankNicolson(Tn):#NEED TO FINISH WRITING THIS put in the inverse matrix
     d = tridiag(A, B, C)
     I=npla.inv(d)#inverse matrix
     T1=I*D
-    Tn.append(T1)
-    return Tn
+    return T1
 
-print(Tn)
-#for n in range(nsteps):#run crank for all t and plot for each
- #   Ti,T_t, tn= CrankNicolson(Ti,T_t,tn,xi)
- #   t[n+1]=tn 
-  #  T[i+1]=Ti#doesnt make sense
-   # T[0]=0#boundary conditions?
-    #T[L]=0
-   # T_t.append(T.copy())
-    #plt.plot(T,x)
-    
-#plt.show()
+print(T1)
+for n in range(nsteps):#run crank for all t and plot for each
+    Tn=CrankNicolson(Tn)
+    Tn.append(Tn)
+
+plt.plot(Tn,x)
+plt.show()
 
 
 # In[ ]:
