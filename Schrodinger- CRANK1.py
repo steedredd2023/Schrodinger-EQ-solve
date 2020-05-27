@@ -118,7 +118,7 @@ for n in range(nsteps):
 print(x)
 
 
-# In[11]:
+# In[35]:
 
 
 #this is my 2nd attempt at crank with the 1D heat equation
@@ -126,34 +126,28 @@ print(x)
 #variables
 L=20
 t0=0
-tmax=L
+tmax=0.01
 x0=0
 xmax=L
-isteps=20
-nsteps=20
+isteps=4*L
+nsteps=10
 dt=tmax/nsteps
 dx=xmax/isteps
 k=L**2/tmax
 r=(k*dt)/(2*(dx)**2)
-sigma=L/4
+sigma=L/8
 x=np.zeros(isteps+1)
 
 for i in range(isteps):
     xi=x0+(i+1)*dx
     x[i+1]=xi
     
-#t=np.zeros(nsteps)
-T=np.zeros(isteps+1)
+T=np.zeros(isteps)
 
-#T for t=0
-
-    #T=np.exp((-1/2)*(xi**2)/(sigma)**2)
-
-
-for i in range(isteps):#gives first array of T vs x
-    xi=x0+(i+1)*dx
-    Ti=np.exp((-1/2)*(xi**2)/(sigma)**2)
-    T[i+1]=Ti
+for i in range(1,isteps):#gives first array of T vs x
+    xi=x0+(i)*dx
+    Ti=np.exp((-1/2)*((xi-(L/2))**2)/(sigma)**2)
+    T[i]=Ti
 print(T)
 
 #make array of arrays of T
@@ -164,23 +158,33 @@ print(Tn)
 def CrankNicolson(T):#NEED TO FINISH WRITING THIS put in the inverse matrix
     a=-r
     b=(1+2*r)
-    c=-r
-    RHS=r*T[i+1]+(1-2*r)*T[i]+r*T[i-1]
-    D=np.matrix[RHS]
+    c=-r#these are also correct for the LHS
+    RHS=np.zeros(isteps)
+    for i in range(1,isteps-1):
+        RHS[i]=r*T[i+1]+(1-2*r)*T[i]+r*T[i-1]#this is correct
+    RHS[0]=r*T[1]
+    RHS[isteps-1]=r*T[isteps-2]
+    D=np.matrix(RHS).T#made matrix and made it vertical
     def tridiag(A, B, C, k1=-1, k2=0, k3=1):#tridiagonal matrix
         return np.diag(A, k1) + np.diag(B, k2) + np.diag(C, k3)
-    A =[a]*(isteps-1); B = [b]*(isteps); C = [c]*(isteps-1)
-    d = tridiag(A, B, C)
-    I=npla.inv(d)#inverse matrix
+    A=[a]*(isteps-1); B = [b]*(isteps); C = [c]*(isteps-1)
+    d=tridiag(A, B, C)
+    I=npla.inv(d)#inverse matrix... this might be the issue..?
     T1=I*D
+    T1=np.array(T1.T)[0]
+    T1[0]=0
+    T1[-1]=0
     return T1
 
-print(T1)
-for n in range(nsteps):#run crank for all t and plot for each
-    Tn=CrankNicolson(Tn)
-    Tn.append(Tn)
+plt.plot(x[0:isteps],T)
 
-plt.plot(Tn,x)
+for n in range(nsteps):#run crank for all t and plot for each
+    print(T)
+    T=(-1**n)*CrankNicolson(T)
+    Tn.append(T)
+    plt.plot(x[0:isteps],T)
+
+
 plt.show()
 
 
